@@ -1,10 +1,15 @@
 package utils
 
-func IntMax(nums ...int) int {
+import (
+	"github.com/HideN2000/go_ds/math"
+)
+
+func IntMax[T math.Ints](nums ...T) T {
+	var max T
 	if len(nums) == 0 {
-		return 0
+		return max
 	}
-	var max int = nums[0]
+	max = nums[0]
 	for _, e := range nums {
 		if max < e {
 			max = e
@@ -13,11 +18,12 @@ func IntMax(nums ...int) int {
 	return max
 }
 
-func IntMin(nums ...int) int {
+func IntMin[T math.Ints](nums ...T) T {
+	var min T
 	if len(nums) == 0 {
-		return 0
+		return min
 	}
-	var min int = nums[0]
+	min = nums[0]
 	for _, e := range nums {
 		if min > e {
 			min = e

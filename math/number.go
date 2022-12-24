@@ -1,13 +1,22 @@
-package number
+package math
 
-func Abs(a int) int {
+type Ints interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
+		~uintptr
+}
+type Floats interface {
+	~float32 | ~float64
+}
+
+func Abs[T Ints](a T) T {
 	if a < 0 {
 		return -a
 	}
 	return a
 }
 
-func Gcd(a, b int) int {
+func Gcd[T Ints](a, b T) T {
 	if a < 0 || b < 0 {
 		return Gcd(Abs(a), Abs(b))
 	}
@@ -17,7 +26,7 @@ func Gcd(a, b int) int {
 	return a
 }
 
-func Lcm(a, b int) int {
+func Lcm[T Ints](a, b T) T {
 	if a < 0 || b < 0 {
 		return Lcm(Abs(a), Abs(b))
 	}

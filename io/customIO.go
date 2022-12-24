@@ -14,23 +14,32 @@ type CustomIO struct {
 	cache  []string
 }
 
-func MakeIO(in io.Reader, out io.Writer, bufsize int) (*CustomIO, error) {
+func MakeIO(in io.Reader, out io.Writer, bufsize uint) (*CustomIO, error) {
 	if bufsize > 1e6 {
 		return nil, fmt.Errorf("bufsize is too large")
 	}
 	io := &CustomIO{
-		reader: *bufio.NewReaderSize(in, bufsize),
-		writer: *bufio.NewWriterSize(out, bufsize),
+		reader: *bufio.NewReaderSize(in, int(bufsize)),
+		writer: *bufio.NewWriterSize(out, int(bufsize)),
 		cache:  []string{},
 	}
 	return io, nil
 }
 
-func (io *CustomIO) NextLine() string {
+func (io *CustomIO) NextLine() ([]string, error) {
+	text, err := io.reader.ReadString('\n')
+	if err != nil {
+		return nil, err
+	}
+	arr := strings.Split(strings.TrimRight(text, "\n"), " ")
+	return arr, nil
+}
+
+func (io *CustomIO) NextWord() (string, error) {
 	for len(io.cache) == 0 {
 		text, err := io.reader.ReadString('\n')
 		if err != nil {
-			panic(err)
+			return "", err
 		}
 		arr := strings.Split(strings.TrimRight(text, "\n"), " ")
 		for i := len(arr) - 1; i >= 0; i-- {
@@ -39,42 +48,44 @@ func (io *CustomIO) NextLine() string {
 	}
 	res := io.cache[len(io.cache)-1]
 	io.cache = io.cache[:len(io.cache)-1]
-	return res
+	return res, nil
 }
 
-func (io *CustomIO) NextInt() int {
-	res, err := strconv.Atoi(io.NextLine())
+func (io *CustomIO) NextInt() (int, error) {
+	s, err := io.NextWord()
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
-	return res
-}
-
-func (io *CustomIO) NextFloat(sep byte) float64 {
-	res, err := strconv.ParseFloat(io.NextLine(), 64)
+	res, err := strconv.Atoi(s)
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
-	return res
+	return res, nil
 }
 
-func (io *CustomIO) Print(objects ...interface{}) {
-	_, err := fmt.Fprintln(&io.writer, objects...)
+func (io *CustomIO) NextFloat(sep byte) (float64, error) {
+	s, err := io.NextWord()
 	if err != nil {
-		panic(err)
+		return 0.0, err
 	}
-}
-
-func (io *CustomIO) Printf(format string, objects ...interface{}) {
-	_, err := fmt.Fprintf(&io.writer, format, objects...)
+	res, err := strconv.ParseFloat(s, 64)
 	if err != nil {
-		panic(err)
+		return 0.0, err
 	}
+	return res, nil
 }
 
-func (io *CustomIO) Flush() {
+func (io *CustomIO) Println(objects ...interface{}) (int, error) {
+	n, err := fmt.Fprintln(&io.writer, objects...)
+	return n, err
+}
+
+func (io *CustomIO) Printf(format string, objects ...interface{}) (int, error) {
+	n, err := fmt.Fprintf(&io.writer, format, objects...)
+	return n, err
+}
+
+func (io *CustomIO) Flush() error {
 	err := io.writer.Flush()
-	if err != nil {
-		panic(err)
-	}
+	return err
 }
