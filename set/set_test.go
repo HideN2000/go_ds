@@ -1,11 +1,14 @@
-package binarytree
+package set_test
 
 import (
 	"sort"
 	"testing"
+
+	errors "github.com/hiden2000/go_ds/errors"
+	set "github.com/hiden2000/go_ds/set"
 )
 
-func TestNewTree(t *testing.T) {
+func TestNew(t *testing.T) {
 	// Type: int
 	t.Run("int", func(t *testing.T) {
 		defer func() {
@@ -14,7 +17,7 @@ func TestNewTree(t *testing.T) {
 				t.Errorf("Unexpected Error: %v", err)
 			}
 		}()
-		_ = NewTree(func(left, right int) bool {
+		_ = set.New(func(left, right int) bool {
 			return left < right
 		})
 	})
@@ -26,7 +29,7 @@ func TestNewTree(t *testing.T) {
 				t.Errorf("Unexpected Error: %v", err)
 			}
 		}()
-		_ = NewTree(func(left, right float64) bool {
+		_ = set.New(func(left, right float64) bool {
 			return left < right
 		})
 	})
@@ -38,7 +41,7 @@ func TestNewTree(t *testing.T) {
 				t.Errorf("Unexpected Error: %v", err)
 			}
 		}()
-		_ = NewTree(func(left, right string) bool {
+		_ = set.New(func(left, right string) bool {
 			return left < right
 		})
 	})
@@ -86,7 +89,7 @@ func TestContains(t *testing.T) {
 				}
 			}()
 
-			tree := NewTree(func(left, right int) bool {
+			tree := set.New(func(left, right int) bool {
 				return left < right
 			})
 
@@ -146,7 +149,7 @@ func TestPrevNext(t *testing.T) {
 				}
 			}()
 
-			tree := NewTree(func(left, right int) bool {
+			tree := set.New(func(left, right int) bool {
 				return left < right
 			})
 
@@ -182,14 +185,14 @@ func TestPrevNext(t *testing.T) {
 				}
 				if i == 0 {
 					//Min case
-					if _, err := tree.Prev(v); err != ErrNotFound {
-						t.Fatalf("Expected %v, got %v", ErrNotFound, err)
+					if _, err := tree.Prev(v); err != errors.ErrNotFound {
+						t.Fatalf("Expected %v, got %v", errors.ErrNotFound, err)
 					}
 
 				} else if i == len(sortedArgs)-1 {
 					//Max case
-					if _, err := tree.Next(v); err != ErrNotFound {
-						t.Fatalf("Expected %v, got %v", ErrNotFound, err)
+					if _, err := tree.Next(v); err != errors.ErrNotFound {
+						t.Fatalf("Expected %v, got %v", errors.ErrNotFound, err)
 					}
 				} else {
 					if prev, err := tree.Prev(v); err != nil {
@@ -243,7 +246,7 @@ func TestPushPop(t *testing.T) {
 				}
 			}()
 
-			tree := NewTree(func(left, right int) bool {
+			tree := set.New(func(left, right int) bool {
 				return left < right
 			})
 
@@ -303,7 +306,7 @@ func TestGetKthElem(t *testing.T) {
 				}
 			}()
 
-			tree := NewTree(func(left, right int) bool {
+			tree := set.New(func(left, right int) bool {
 				return left < right
 			})
 
@@ -377,7 +380,7 @@ func TestMinMax(t *testing.T) {
 				}
 			}()
 
-			tree := NewTree(func(left, right int) bool {
+			tree := set.New(func(left, right int) bool {
 				return left < right
 			})
 
@@ -390,12 +393,12 @@ func TestMinMax(t *testing.T) {
 			}
 
 			if len(tc.args) == 0 {
-				if _, err := tree.Min(); err != ErrTreeEmpty {
-					t.Errorf("Expected %v, got %v instead.", ErrTreeEmpty, err)
+				if _, err := tree.Min(); err != errors.ErrNotFound {
+					t.Errorf("Expected %v, got %v instead.", errors.ErrNotFound, err)
 				}
 
-				if _, err := tree.Max(); err != ErrTreeEmpty {
-					t.Errorf("Expected %v, got %v instead.", ErrTreeEmpty, err)
+				if _, err := tree.Max(); err != errors.ErrNotFound {
+					t.Errorf("Expected %v, got %v instead.", errors.ErrNotFound, err)
 				}
 
 			} else {
@@ -425,7 +428,7 @@ func BenchmarkPushPop(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 
-		tree := NewTree(func(left, right int) bool {
+		tree := set.New(func(left, right int) bool {
 			return left <= right
 		})
 

@@ -1,9 +1,11 @@
 package utils
 
 import (
-	"github.com/HideN2000/go_ds/math"
+	math "project/hiden2000/acgo/lib/math"
 )
 
+// IntMaxは math.Intsのスライスnumsにおける最大値を返す
+// Time: O(N)
 func IntMax[T math.Ints](nums ...T) T {
 	var max T
 	if len(nums) == 0 {
@@ -18,6 +20,8 @@ func IntMax[T math.Ints](nums ...T) T {
 	return max
 }
 
+// IntMinは math.Intsのスライスnumsにおける最小値を返す
+// Time: O(N)
 func IntMin[T math.Ints](nums ...T) T {
 	var min T
 	if len(nums) == 0 {
